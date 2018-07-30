@@ -1,6 +1,8 @@
 package com.mk.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,4 +24,11 @@ public class TestController {
 		
 		return testService.getStudents();
 	}
+	
+	@RequestMapping(value="updateStudent",method=RequestMethod.POST)
+	public Map<String,String> updateStudent(){
+		
+		return new HashMap<String, String>();
+	}
+	
 }
