@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-Title: mkfun
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.mk
+Build-Jdk: 1.6.0_43
+Built-By: Administrator
+Created-By: Maven Integration for Eclipse
+Implementation-URL: http://projects.spring.io/spring-boot/mkfun/
+

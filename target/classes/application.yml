@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: mkfun
+  datasource:
+    url: jdbc:mysql://192.168.234.128:3306/test
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    
+mybatis:
+   type-aliases-package: com.mk.po
+   mapper-locations: com/mk/mapper/*.xml
+server:
+   port: 8686
