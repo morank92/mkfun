@@ -24,13 +24,13 @@ public class BaseFilter implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest req,
 			HttpServletResponse res, Object handler, Exception exception)
 			throws Exception {
-		// TODO Auto-generated method stub
+		log.info("------------------结束拦截-------------------");
 
 	}
 
-	public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1,
+	public void postHandle(HttpServletRequest req, HttpServletResponse arg1,
 			Object arg2, ModelAndView arg3) throws Exception {
-		// TODO Auto-generated method stub
+		log.info("------------------??拦截-------------------");
 
 	}
 

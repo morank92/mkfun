@@ -34,7 +34,7 @@ public class TestController {
 	}
 	
 	@RequestMapping(value="updateStudent",method=RequestMethod.POST)
-	public Map<String,String> updateStudent(@RequestParam("id") int id){
+	public Map<String,String> updateStudent(@RequestParam(value="id",required=false,defaultValue="0") int id){
 		System.out.println("id------------------------->>>>>>>>>  "+id);
 		return new HashMap<String, String>();
 	}

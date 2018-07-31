@@ -3,7 +3,6 @@ package com.mk.JMS;
 import javax.annotation.Resource;
 import javax.jms.Destination;
 
-import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
