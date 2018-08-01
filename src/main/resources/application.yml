@@ -27,3 +27,8 @@ logging:
 server:
    port: 8686
    
+# netty port
+netty: 
+  server: 
+    port: 9001
+   
