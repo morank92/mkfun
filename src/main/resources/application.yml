@@ -16,6 +16,14 @@ mybatis:
    mapper-locations: com/mk/mapper/*.xml
    config-location: 
      classpath: mybatis-conf.xml
+
+#mybatis 日志
+logging: 
+  level: 
+    com: 
+      mk: 
+        dao: debug
+     
 server:
    port: 8686
    
