@@ -41,7 +41,7 @@ public class TestController {
 	
 	@RequestMapping(value="sendMessageMQ",method=RequestMethod.POST)
 	public Map<String,String> sendMessageMQ(@RequestParam("msg") String msg){
-		System.out.println("------------msg------------->>>>>>>>>  "+msg);
+		System.out.println("-----msg-------msg------msg------->>>>>>>>>  "+msg);
 		
 		//目的地址队列
 		Destination dest = new ActiveMQQueue("mytest.queue");
