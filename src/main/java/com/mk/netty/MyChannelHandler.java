@@ -1,5 +1,10 @@
 package com.mk.netty;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +14,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelId;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -32,7 +38,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MyChannelHandler.class);
 
     private static final String URI = "websocket";
-
+    
     private WebSocketServerHandshaker handshaker ;
 
     /**
@@ -43,6 +49,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("【handlerAdded】====>"+ctx.channel().id());
+        LOGGER.info("---------this object------------>"+this.toString());
         GlobalUserUtil.channels.add(ctx.channel());
     }
 
@@ -78,6 +85,12 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("【channelActive】=====>"+ctx.channel());
+        int size = GlobalUserUtil.channels.size();
+        Channel channel = ctx.channel();
+        String str = "共 "+size+" 人在线";
+        TextWebSocketFrame rmsg = new TextWebSocketFrame(str);
+        channel.writeAndFlush(rmsg);
+        ctx.flush();
     }
 
     /**
@@ -135,6 +148,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
      * @throws Exception
      */
     protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+    	
         if(msg instanceof HttpRequest){
             doHandlerHttpRequest(ctx,(HttpRequest) msg);
         }else if(msg instanceof WebSocketFrame){
@@ -171,9 +185,22 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
             throw new UnsupportedOperationException("不支持二进制");
         }
         //可以对消息进行处理
+        ChannelId cid = ctx.channel().id();
+        String text = ((TextWebSocketFrame) msg).text();
+        
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //群发
         for (Channel channel : GlobalUserUtil.channels) {
-            channel.writeAndFlush(new TextWebSocketFrame(((TextWebSocketFrame) msg).text()));
+        	String str = text;
+        	if(cid.equals(channel.id())){
+        		str = "我  "+time+": "+text;
+        	}else{
+        		str = channel.id().toString()+"  "+time+": "+text;
+        	}
+        	
+        	TextWebSocketFrame rmsg = new TextWebSocketFrame(str);
+        	
+            channel.writeAndFlush(rmsg);
         }
 
     }
@@ -206,6 +233,9 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
         //进行连接
         handshaker.handshake(ctx.channel(), (FullHttpRequest) msg);
         //可以做其他处理
+        
+        
+        
     }
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res) {
