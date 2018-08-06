@@ -25,6 +25,7 @@ logging:
         dao: debug
      
 server:
+   context-path: /mk
    port: 8686
    
 # netty port

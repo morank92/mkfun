@@ -39,6 +39,8 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     private static final String URI = "websocket";
     
+    private int count = 0;
+    
     private WebSocketServerHandshaker handshaker ;
 
     /**
@@ -49,8 +51,11 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("【handlerAdded】====>"+ctx.channel().id());
-        LOGGER.info("---------this object------------>"+this.toString());
-        GlobalUserUtil.channels.add(ctx.channel());
+        LOGGER.info("【count】====>"+GlobalUserUtil.channels.size());
+        GlobalUserUtil.channels.add(ctx.channel()); 
+        count = GlobalUserUtil.channels.size();
+        String str = ctx.channel().id().toString()+" 已上线,在线人数 "+count;
+        sendAllMsg(str);
     }
 
     /**
@@ -62,6 +67,8 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("【handlerRemoved】====>"+ctx.channel().id());
         GlobalUserUtil.channels.remove(ctx);
+        String str = ctx.channel().id().toString()+" 断开连接,在线人数 "+count;
+        sendAllMsg(str);
     }
 
     /**
@@ -73,8 +80,11 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LOGGER.error("【系统异常】======>"+cause.toString());
+        String str = ctx.channel().id().toString()+" 异常断开,在线人数 "+count;
+        sendAllMsg(str);
         ctx.close();
         ctx.channel().close();
+        
     }
 
     /**
@@ -85,12 +95,6 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("【channelActive】=====>"+ctx.channel());
-        int size = GlobalUserUtil.channels.size();
-        Channel channel = ctx.channel();
-        String str = "共 "+size+" 人在线";
-        TextWebSocketFrame rmsg = new TextWebSocketFrame(str);
-        channel.writeAndFlush(rmsg);
-        ctx.flush();
     }
 
     /**
@@ -138,7 +142,17 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
                     LOGGER.info("【"+ctx.channel().remoteAddress()+"】读写空闲");
                     break;
             }
+            
         }
+    }
+    
+    
+    //群发同样的信息
+    public void sendAllMsg(String msg){
+    	TextWebSocketFrame rmsg = new TextWebSocketFrame(msg);
+    	for (Channel channel : GlobalUserUtil.channels) {
+    		channel.writeAndFlush(rmsg);
+    	}
     }
 
     /**
@@ -233,8 +247,6 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
         //进行连接
         handshaker.handshake(ctx.channel(), (FullHttpRequest) msg);
         //可以做其他处理
-        
-        
         
     }
 
